@@ -41,7 +41,7 @@ public class Cab{
         this.perKmRate = perKmRate;
     }
 
-    public boolean getgitAvailable() {
+    public boolean getAvailable() {
         return available;
     }
 
