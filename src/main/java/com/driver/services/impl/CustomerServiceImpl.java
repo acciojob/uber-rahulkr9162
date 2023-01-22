@@ -41,51 +41,86 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public TripBooking bookTrip(int customerId, String fromLocation, String toLocation, int distanceInKm) throws Exception{
+	public TripBooking bookTrip(int customerId, String fromLocation, String toLocation, int distanceInKm) throws Exception {
 		//Book the driver with lowest driverId who is free (cab available variable is Boolean.TRUE). If no driver is available, throw "No cab available!" exception
 		//Avoid using SQL query
 		List<Driver> drivers = driverRepository2.findAll();
-
-		List<Integer> driverId = new ArrayList<>();
-		for(Driver driver : drivers) {
+		TripBooking tripBooking = new TripBooking();
+		boolean flag = false;
+		for (Driver driver : drivers) {
 			if (driver.getCab().getAvailable() == true) {
-				int id = driver.getDriverId();
-				driverId.add(id);
+				driver.getCab().setAvailable(false);
+				tripBooking.setStatus(TripStatus.CONFIRMED);
+				tripBooking.setBill(driver.getCab().getPerKmRate() * distanceInKm);
+				tripBooking.setFromLocation(fromLocation);
+				tripBooking.setToLocation(toLocation);
+				tripBooking.setDistanceInKm(distanceInKm);
+
+
+				Customer customer = customerRepository2.findById(customerId).get();
+				List<TripBooking> list = customer.getTripBookingList();
+				list.add(tripBooking);
+				customer.setTripBookingList(list);
+				tripBooking.setCustomer(customer);
+
+				List<TripBooking> list1 = driver.getTripBooking();
+				list1.add(tripBooking);
+				driver.setTripBooking(list1);
+				tripBooking.setDriver(driver);
+
+				driverRepository2.save(driver);
+				customerRepository2.save(customer);
+				flag = true;
+				break;
 			}
 		}
-		if(driverId.size() == 0){
+		if (flag == false) {
 			throw new Exception("No cab available!");
-		}
-		else {
-			Collections.sort(driverId);
-			TripBooking tripBooking = new TripBooking();
-			Customer customer = customerRepository2.findById(customerId).get();
-			Driver driver = driverRepository2.findById(driverId.get(0)).get();
-
-			tripBooking.setStatus(TripStatus.CONFIRMED);
-			tripBooking.setBill(100);
-			tripBooking.setFromLocation(fromLocation);
-			tripBooking.setToLocation(toLocation);
-			tripBooking.setDistanceInKm(distanceInKm);
-
-//			List<TripBooking> list = customer.getTripBookingList();
-//			list.add(tripBooking);
-//			customer.setTripBookingList(list);
-			tripBooking.setCustomer(customer);
-
-//			List<TripBooking> list1 = driver.getTripBooking();
-//			list1.add(tripBooking);
-//			driver.setTripBooking(list1);
-			tripBooking.setDriver(driver);
-
-			driverRepository2.save(driver);
-			customerRepository2.save(customer);
-		//	tripBookingRepository2.save(tripBooking);
-
+		} else {
 			return tripBooking;
 		}
-
 	}
+
+//		List<Integer> driverId = new ArrayList<>();
+//		for(Driver driver : drivers) {
+//			if (driver.getCab().getAvailable() == true) {
+//				int id = driver.getDriverId();
+//				driverId.add(id);
+//			}
+//		}
+//		if(driverId.size() == 0){
+//			throw new Exception("No cab available!");
+//		}
+//		else {
+//			Collections.sort(driverId);
+//			TripBooking tripBooking = new TripBooking();
+//			Customer customer = customerRepository2.findById(customerId).get();
+//			Driver driver = driverRepository2.findById(driverId.get(0)).get();
+//
+//			tripBooking.setStatus(TripStatus.CONFIRMED);
+//			tripBooking.setBill(100);
+//			tripBooking.setFromLocation(fromLocation);
+//			tripBooking.setToLocation(toLocation);
+//			tripBooking.setDistanceInKm(distanceInKm);
+//
+////			List<TripBooking> list = customer.getTripBookingList();
+////			list.add(tripBooking);
+////			customer.setTripBookingList(list);
+//			    tripBooking.setCustomer(customer);
+//
+////			List<TripBooking> list1 = driver.getTripBooking();
+////			list1.add(tripBooking);
+////			driver.setTripBooking(list1);
+//			tripBooking.setDriver(driver);
+//
+//			driverRepository2.save(driver);
+//			customerRepository2.save(customer);
+//		//	tripBookingRepository2.save(tripBooking);
+//
+//			return tripBooking;
+//		}
+
+
 
 	@Override
 	public void cancelTrip(Integer tripId){
