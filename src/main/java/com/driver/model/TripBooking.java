@@ -24,7 +24,7 @@ public class TripBooking {
 
     @ManyToOne
     @JoinColumn
-    private Driver driver;
+    private Driver drivers;
 
     public TripBooking() {
     }
@@ -37,7 +37,7 @@ public class TripBooking {
         this.status = status;
         this.bill = bill;
         this.customer = customer;
-        this.driver = driver;
+        this.drivers = driver;
     }
 
     public int getTripBookingId() {
@@ -97,10 +97,10 @@ public class TripBooking {
     }
 
     public Driver getDriver() {
-        return driver;
+        return drivers;
     }
 
     public void setDriver(Driver driver) {
-        this.driver = driver;
+        this.drivers = driver;
     }
 }
