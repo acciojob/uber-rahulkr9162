@@ -29,6 +29,7 @@ public class DriverServiceImpl implements DriverService {
 		Cab cab = new Cab();
 		cab.setPerKmRate(10);
 		cab.setAvailable(true);
+		driver.setCab(cab);
 
 		driverRepository3.save(driver);
 
