@@ -94,7 +94,7 @@ public class CustomerServiceImpl implements CustomerService {
 		tripBooking.setStatus(TripStatus.CANCELED);
 		driver.getCab().setAvailable(true);
 
-		driverRepository2.save(driver);
+		tripBookingRepository2.save(tripBooking);
 
 	}
 
@@ -106,7 +106,7 @@ public class CustomerServiceImpl implements CustomerService {
 		tripBooking.setStatus(TripStatus.COMPLETED);
 		driver.getCab().setAvailable(true);
 
-		driverRepository2.save(driver);
+		tripBookingRepository2.save(tripBooking);
 
 	}
 }
